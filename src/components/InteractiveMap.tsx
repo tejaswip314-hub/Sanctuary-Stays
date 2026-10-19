@@ -240,6 +240,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             title="Zoom In"
             aria-label="Zoom in"
+            suppressHydrationWarning
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
@@ -248,6 +249,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             title="Zoom Out"
             aria-label="Zoom out"
+            suppressHydrationWarning
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
@@ -256,6 +258,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             title="Recenter World"
             aria-label="Recenter map"
+            suppressHydrationWarning
           >
             <Crosshair className="w-3.5 h-3.5" />
           </button>
@@ -264,6 +267,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             aria-label="Toggle fullscreen"
+            suppressHydrationWarning
           >
             {isFullscreen ? (
               <Minimize2 className="w-3.5 h-3.5" />
@@ -442,7 +446,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = (props) => {
     <MapErrorBoundary>
       <APIProvider
         apiKey={API_KEY}
-        region="IN"
         language="en"
         onError={() => setLoadError(true)}
       >

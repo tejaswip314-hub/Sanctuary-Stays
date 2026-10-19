@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { SanctuaryStay, ConciergeAddon } from '../types/sanctuary';
+import { groupAmenities } from '../data/amenityCatalog';
+import { StayLocationMap } from './StayLocationMap';
 import {
   X,
   Star,
@@ -22,9 +24,36 @@ import {
   Moon,
   Shield,
   Activity,
-  Award,
   Quote,
+  Waves,
+  Flame,
+  UtensilsCrossed,
+  BatteryCharging,
+  Dumbbell,
+  Car,
+  Trees,
+  Music,
+  Wind,
 } from 'lucide-react';
+
+function amenityIcon(label: string) {
+  const l = label.toLowerCase();
+  if (/(spa|massage|hammam|wellness|therapist)/.test(l)) return Sparkles;
+  if (/(sauna|steam|fire|bonfire|barbecue|bbq|heating|fireplace)/.test(l)) return Flame;
+  if (/(chef|dining|kitchen|cook|feast|culinary|sommelier)/.test(l)) return UtensilsCrossed;
+  if (/(coffee|espresso|tea|refreshment|hamper)/.test(l)) return Coffee;
+  if (/(pool|plunge|jetty|boat|kayak|paddle|river|beach|lake|sea|ocean|waterfront)/.test(l)) return Waves;
+  if (/(wi-fi|wifi|internet|fibre|fiber|broadband)/.test(l)) return Wifi;
+  if (/(ev charger|charging|charger)/.test(l)) return BatteryCharging;
+  if (/(gym|fitness|yoga|studio)/.test(l)) return Dumbbell;
+  if (/(chauffeur|car hire|car|transfer|driver)/.test(l)) return Car;
+  if (/(trail|trek|mountain|forest|garden|estate|nature|plantation|walk|orchard|stargaz|birdwatching|wildlife)/.test(l)) return Trees;
+  if (/(music|vinyl|sound|bluetooth|library|games|book)/.test(l)) return Music;
+  if (/(climate|air purification|wind)/.test(l)) return Wind;
+  if (/(linen|linens|bed|pillow|drapes|sleep)/.test(l)) return Moon;
+  if (/(security|safe|concierge|butler|manager|host|liaison|guide)/.test(l)) return ShieldCheck;
+  return CheckCircle2;
+}
 
 interface SanctuaryDetailModalProps {
   sanctuary: SanctuaryStay | null;
@@ -59,6 +88,7 @@ export const SanctuaryDetailModal: React.FC<SanctuaryDetailModalProps> = ({
   const [checkOutDate, setCheckOutDate] = useState('2026-11-16');
   const [guestsCount, setGuestsCount] = useState(2);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
 
   if (!sanctuary) return null;
 
@@ -84,6 +114,8 @@ export const SanctuaryDetailModal: React.FC<SanctuaryDetailModalProps> = ({
 
   const taxesAndService = Math.round((subtotal + conciergeTotal) * 0.12);
   const total = subtotal + conciergeTotal + taxesAndService;
+
+  const amenityGroups = groupAmenities(sanctuary.amenities);
 
   const toggleAddon = (id: string) => {
     setSelectedAddonIds((prev) =>
@@ -257,6 +289,100 @@ export const SanctuaryDetailModal: React.FC<SanctuaryDetailModalProps> = ({
                 <p className="text-sm leading-relaxed whitespace-pre-line font-light opacity-90">
                   {sanctuary.description}
                 </p>
+              </div>
+
+              {/* Location & Neighborhood Map */}
+              <div className="space-y-3">
+                <h3 className="font-editorial text-xl flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-[#d4af37]" />
+                  Location & Neighborhood
+                </h3>
+                <StayLocationMap stay={sanctuary} isDarkTheme={isDarkTheme} height={280} />
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                  <div className={`p-3 rounded-xl border space-y-1 ${isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'}`}>
+                    <div className="flex items-center gap-1.5 text-[#d4af37] uppercase text-[10px] font-semibold">
+                      <VolumeX className="w-3 h-3" /> Acoustics
+                    </div>
+                    <div className="opacity-90 leading-snug">{sanctuary.neighborhoodVibe.noiseLevel}</div>
+                  </div>
+                  <div className={`p-3 rounded-xl border space-y-1 ${isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'}`}>
+                    <div className="flex items-center gap-1.5 text-[#d4af37] uppercase text-[10px] font-semibold">
+                      <Moon className="w-3 h-3" /> Dark Sky
+                    </div>
+                    <div className="opacity-90 leading-snug">{sanctuary.neighborhoodVibe.darkSkyClass}</div>
+                  </div>
+                  <div className={`p-3 rounded-xl border space-y-1 ${isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'}`}>
+                    <div className="flex items-center gap-1.5 text-[#d4af37] uppercase text-[10px] font-semibold">
+                      <Shield className="w-3 h-3" /> Privacy
+                    </div>
+                    <div className="opacity-90 leading-snug">{sanctuary.neighborhoodVibe.privacyScore} / 100</div>
+                  </div>
+                  <div className={`p-3 rounded-xl border space-y-1 ${isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'}`}>
+                    <div className="flex items-center gap-1.5 text-[#d4af37] uppercase text-[10px] font-semibold">
+                      <Clock className="w-3 h-3" /> Airport
+                    </div>
+                    <div className="opacity-90 leading-snug">{sanctuary.neighborhoodVibe.nearestAirportMins} mins drive</div>
+                  </div>
+                  <div className={`p-3 rounded-xl border space-y-1 col-span-2 sm:col-span-2 ${isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'}`}>
+                    <div className="flex items-center gap-1.5 text-[#d4af37] uppercase text-[10px] font-semibold">
+                      <UtensilsCrossed className="w-3 h-3" /> Culinary Proximity
+                    </div>
+                    <div className="opacity-90 leading-snug">{sanctuary.neighborhoodVibe.culinaryProximity}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Amenities & Guest Services */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-editorial text-xl flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#d4af37]" />
+                    Amenities & Guest Services
+                  </h3>
+                  <span className="text-xs text-[#a8a194]">{sanctuary.amenities.length} included</span>
+                </div>
+
+                <div className="space-y-4">
+                  {amenityGroups.map((group) => {
+                    const items = showAllAmenities ? group.items : group.items.slice(0, 4);
+                    return (
+                      <div key={group.label} className="space-y-2">
+                        <div className="text-[11px] uppercase tracking-wider text-[#d4af37] font-semibold">
+                          {group.label}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {items.map((item) => {
+                            const Icon = amenityIcon(item);
+                            return (
+                              <div
+                                key={item}
+                                className={`flex items-center gap-2.5 p-2.5 rounded-xl border ${
+                                  isDarkTheme ? 'bg-white/[0.03] border-white/10' : 'bg-stone-50 border-stone-200'
+                                }`}
+                              >
+                                <Icon className="w-4 h-4 text-[#d4af37] shrink-0" />
+                                <span className="text-xs leading-snug">{item}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setShowAllAmenities((prev) => !prev)}
+                  className={`w-full py-2.5 rounded-xl border text-xs font-medium uppercase tracking-wider transition-colors cursor-pointer ${
+                    isDarkTheme
+                      ? 'border-white/15 text-[#d4af37] hover:border-[#d4af37]/60 hover:bg-white/5'
+                      : 'border-stone-300 text-[#b38947] hover:border-[#b38947] hover:bg-stone-100'
+                  }`}
+                >
+                  {showAllAmenities
+                    ? 'Show fewer amenities'
+                    : `Show all ${sanctuary.amenities.length} amenities`}
+                </button>
               </div>
 
               {/* Curator Jury Quote */}

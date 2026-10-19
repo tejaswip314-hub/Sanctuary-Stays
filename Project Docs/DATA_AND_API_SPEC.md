@@ -48,7 +48,7 @@ export interface SanctuaryStay {
   neighborhoodVibe: NeighborhoodVibeRating;
   vettingAudit: VettingStandardAudit;
   availableConciergeServices: ConciergeAddon[];
-  amenities: string[];
+  amenities: string[];                       // stay-specific + collective + collection standards (merged)
   reviews: VerifiedGuestReview[];
   rules: {
     minimumNights: number;
@@ -83,6 +83,12 @@ export interface VettingStandardAudit {
   wellnessHighlights: string[];
 }
 ```
+
+### Amenity Catalog (`src/data/amenityCatalog.ts`)
+- **`COLLECTIVE_AMENITIES`** — 16 amenities provided by **every** Sanctuary (fibre Wi-Fi, 24/7 concierge, zero-chore housekeeping, silk/organic linens, EV charger, welcome hamper, security, etc.).
+- **`COLLECTION_AMENITIES`** — a `Record<Collection, string[]>` of 4 signature amenities per collection (e.g. *Metropolitan Residences* → private gym, chauffeur, business lounge, in-residence spa; *World Sanctuaries* → multilingual host, private chef & sommelier, curated local experiences, in-residence therapist).
+- **`withAmenities(stays)`** — merges each stay's own amenities with the collective + its collection set, de-duplicating. Applied to the combined `SANCTUARIES` export so every stay presents a rich, varied amenity list (~22–26 items).
+- **`groupAmenities(amenities)`** — partitions a flat amenity list into themed groups (Wellness & Spa, Culinary & Refreshments, Technology & Comfort, Outdoors & Experiences, Services & Safety) for the detail modal.
 
 ### `NeighborhoodVibeRating`
 ```typescript

@@ -1,5 +1,6 @@
 import { SanctuaryStay } from '../types/sanctuary';
 import { GLOBAL_SANCTUARIES } from './sanctuaries-global';
+import { withAmenities } from './amenityCatalog';
 
 const INDIA_SANCTUARIES: SanctuaryStay[] = [
   {
@@ -1330,8 +1331,8 @@ const INDIA_SANCTUARIES: SanctuaryStay[] = [
   },
 ];
 
-export const SANCTUARIES: SanctuaryStay[] = [
+export const SANCTUARIES: SanctuaryStay[] = withAmenities([
   ...INDIA_SANCTUARIES,
   ...GLOBAL_SANCTUARIES,
-];
+]);
 

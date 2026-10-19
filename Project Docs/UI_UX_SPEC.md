@@ -56,6 +56,7 @@ Users can switch between three responsive layout modes via the toolbar in the ma
 - **Controls:** In-map zoom in/out, recenter-to-world, and native fullscreen toggle (`requestFullscreen`), plus a live stay count. Google's default UI is disabled.
 - **Hover Sync:** Hovering a card highlights its pin (and vice-versa) driven by `hoveredSanctuaryId`; clicking a pin opens the detail modal.
 - **Floating Vibe Bar:** Displays ambient acoustics (*21 dB Quiet*), dark-sky Bortle class, and private perimeter score (*99 / 100*), offset above the Google attribution.
+- **Portable Per-Stay Map (`StayLocationMap.tsx`):** A standalone, reusable Google Map (own `APIProvider`) that plots a single stay's coordinates with a branded `.snc-marker-pill` pin and *Get Directions* / *Open in Maps* links. Used inside the detail modal; falls back to a styled coordinate card (with the same deep links) when no API key is configured, and is guarded by its own error boundary.
 
 ---
 
@@ -74,6 +75,8 @@ Users can switch between three responsive layout modes via the toolbar in the ma
 1. **Sanctuary Detail Spread (`SanctuaryDetailModal.tsx`)**:
    - Full-bleed photo gallery with thumbnail selector.
    - Architectural provenance & architect profile.
+   - **Location & Neighborhood** — a per-stay **custom location map** (`StayLocationMap.tsx`) centred on the stay's exact coordinates with a gold pin, plus *Get Directions* / *Open in Maps* deep links and a neighborhood vibe grid (acoustics, dark-sky class, privacy score, airport drive time, culinary proximity).
+   - **Amenities & Guest Services** — themed amenity groups (Wellness & Spa, Culinary, Technology & Comfort, Outdoors & Experiences, Services & Safety) rendered as icon chips with a *Show all N amenities* expander.
    - 100-Point Audit Report with **Acoustic Frequency Spectrum Bars** (Low, Mid, High frequency isolation dB).
    - Verified guest testimonials with traveler professional credentials.
    - Interactive date & guest selector with live recalculation of bespoke concierge add-ons, GST, and turnkey zero-chore checkout guarantee ($0).

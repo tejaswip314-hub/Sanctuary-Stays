@@ -22,6 +22,7 @@ graph TD
         ViewSwitcher["Layout Switcher: Split Map | Grid | Full Map"]
         Cards["SanctuaryCard.tsx (Listing Cards with Map Hover Sync)"]
         MapComp["InteractiveMap.tsx (Vector World Cartography & Pin Sync)"]
+        StayMap["StayLocationMap.tsx (Per-Stay Location Map & Directions)"]
         VettingComp["VettingStandardSection.tsx (100-Point Rubric vs Mass Rentals)"]
         Footer["Footer.tsx (Design Press & Charter)"]
     end
@@ -37,6 +38,7 @@ graph TD
 
     subgraph Data_Layer ["Data & State Layer"]
         DB["src/data/sanctuaries.ts + sanctuaries-global.ts (27 Curated Sanctuaries, India & Worldwide)"]
+        Amen["src/data/amenityCatalog.ts (Collective & Collection Amenity Standards)"]
         Types["src/types/sanctuary.ts (TypeScript Interfaces)"]
         LocalStorage["Client LocalStorage (Wishlists & Theme Preference)"]
     end
@@ -103,8 +105,10 @@ sanctuary-stays/
 │   │   ├── SanctuaryCard.tsx
 │   │   ├── SanctuaryDetailModal.tsx
 │   │   ├── SavedStaysModal.tsx
+│   │   ├── StayLocationMap.tsx       # Reusable per-stay Google map + directions
 │   │   └── VettingStandardSection.tsx
 │   ├── data/
+│   │   ├── amenityCatalog.ts         # Collective + collection amenities & grouping
 │   │   ├── sanctuaries.ts            # Curated India architectural catalog (12 stays)
 │   │   └── sanctuaries-global.ts     # New Indian-city + international stays (15); combined into SANCTUARIES
 │   └── types/
