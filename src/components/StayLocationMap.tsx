@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   APIProvider,
   AdvancedMarker,
@@ -8,7 +8,10 @@ import {
   Map as GoogleMap,
 } from '@vis.gl/react-google-maps';
 import { SanctuaryStay } from '../types/sanctuary';
-import { MapPin, Navigation, ExternalLink, Compass } from 'lucide-react';
+import { MapPin, Navigation, ExternalLink, Compass, Eye } from 'lucide-react';
+import { MapTypeSwitcher, MapType } from './MapTypeSwitcher';
+import { AirQualityBadge } from './AirQualityBadge';
+import { StreetViewModal } from './StreetViewModal';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
@@ -88,18 +91,24 @@ const LocationFallback: React.FC<{ stay: SanctuaryStay; height: number; isDarkTh
 
 export const StayLocationMap: React.FC<StayLocationMapProps> = ({ stay, isDarkTheme, height = 260 }) => {
   const { lat, lng } = stay.location.coordinates;
+  const [mapType, setMapType] = useState<MapType>('roadmap');
+  const [showStreetView, setShowStreetView] = useState(false);
 
   const overlay = (
     <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-3">
-      <div className="flex justify-start">
+      <div className="flex items-start justify-between gap-2">
         <div className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[11px] text-white">
           <Compass className="w-3.5 h-3.5 text-[#d4af37]" />
           <span className="font-editorial tracking-wide">
             {stay.location.city}, {stay.location.state}
           </span>
         </div>
+        <div className="flex flex-col items-end gap-2">
+          <MapTypeSwitcher value={mapType} onChange={setMapType} />
+          <AirQualityBadge lat={lat} lng={lng} />
+        </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <a
           href={directionsToStay(stay)}
           target="_blank"
@@ -109,6 +118,15 @@ export const StayLocationMap: React.FC<StayLocationMapProps> = ({ stay, isDarkTh
           <Navigation className="w-3.5 h-3.5" />
           Get Directions
         </a>
+        <button
+          type="button"
+          onClick={() => setShowStreetView(true)}
+          suppressHydrationWarning
+          className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md border border-white/15 text-white text-[11px] font-medium hover:border-[#d4af37]/60 transition-colors cursor-pointer"
+        >
+          <Eye className="w-3.5 h-3.5 text-[#d4af37]" />
+          Street View
+        </button>
         <a
           href={openInMaps(stay)}
           target="_blank"
@@ -137,11 +155,12 @@ export const StayLocationMap: React.FC<StayLocationMapProps> = ({ stay, isDarkTh
         <APIProvider apiKey={API_KEY} language="en">
           <GoogleMap
             mapId={MAP_ID}
+            mapTypeId={mapType as google.maps.MapTypeId}
             colorScheme={isDarkTheme ? ColorScheme.DARK : ColorScheme.LIGHT}
             defaultCenter={{ lat, lng }}
-            defaultZoom={13}
+            defaultZoom={16}
             minZoom={3}
-            maxZoom={18}
+            maxZoom={21}
             gestureHandling="cooperative"
             disableDefaultUI
             clickableIcons={false}
@@ -161,6 +180,14 @@ export const StayLocationMap: React.FC<StayLocationMapProps> = ({ stay, isDarkTh
             </AdvancedMarker>
           </GoogleMap>
           {overlay}
+          {showStreetView && (
+            <StreetViewModal
+              lat={lat}
+              lng={lng}
+              title={stay.title}
+              onClose={() => setShowStreetView(false)}
+            />
+          )}
         </APIProvider>
       </MapErrorBoundary>
     </div>

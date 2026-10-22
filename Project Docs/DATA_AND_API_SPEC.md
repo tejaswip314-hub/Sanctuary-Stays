@@ -292,6 +292,37 @@ export interface NeighborhoodVibeRating {
 
 ---
 
+### 6. `GET /api/air-quality?lat={lat}&lng={lng}`
+- **Purpose**: Server-side air-quality proxy for the stay's coordinates. Uses the **Google Air Quality API** (`currentConditions:lookup`) when `GOOGLE_AIR_QUALITY_API_KEY` is set, otherwise falls back to the keyless **Open-Meteo Air Quality API** (European AQI, CC BY 4.0) so the chip works out of the box. Keeps keys off the client and caches results for 15 minutes.
+- **Query Params**: `lat` (−90…90) and `lng` (−180…180), both required and numeric.
+- **Response (`200 OK`) — configured**:
+  ```json
+  {
+    "success": true,
+    "available": true,
+    "source": "google",
+    "index": {
+      "code": "uaqi",
+      "displayName": "Universal AQI",
+      "aqi": 62,
+      "aqiDisplay": "62",
+      "category": "Moderate air quality",
+      "dominantPollutant": "pm25",
+      "color": { "red": 255, "green": 255, "blue": 0 }
+    },
+    "pollutants": [
+      { "code": "pm25", "displayName": "PM2.5", "fullName": "Particulate matter (PM2.5)", "value": 12.3, "units": "MICROGRAMS_PER_CUBIC_METER" }
+    ],
+    "dateTime": "2026-10-22T08:00:00Z",
+    "healthRecommendations": { "generalPopulation": "…" }
+  }
+  ```
+- **Provider fallback**: `source` is `google` or `open-meteo`. Open-Meteo responses use the same `index`/`pollutants` shape with `index.code: "european_aqi"`, and the UI credits the active source in the chip.
+- **Invalid coordinates**: `400`. **Both upstreams failed**: `502` with the combined error message; the chip degrades to *Air quality unavailable*.
+- **Headers**: `Cache-Control: public, s-maxage=900, stale-while-revalidate=300`.
+
+---
+
 ## 4. Environment Variables
 
 Client-exposed variables must be prefixed with `NEXT_PUBLIC_` (inlined into the browser bundle at build time). A template lives in `.env.example` (opted-in to git); real values belong in `.env.local` (git-ignored).
@@ -300,5 +331,6 @@ Client-exposed variables must be prefixed with `NEXT_PUBLIC_` (inlined into the 
 | :--- | :--- | :--- | :--- |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Yes (for the interactive map) | Client | Google Maps JavaScript API key. Restrict it by **HTTP referrer** (`http://localhost:3000/*` + production domain) and to the **Maps JavaScript API**. When unset, `InteractiveMap.tsx` renders a branded *Connect Google Maps* placeholder instead of failing. |
 | `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | No | Client | Google Cloud **Map ID** enabling vector styling + Advanced Markers. Falls back to Google's shared `DEMO_MAP_ID` when unset. |
+| `GOOGLE_AIR_QUALITY_API_KEY` | No | Server | Google **Air Quality API** key used by `/api/air-quality`. Restrict it to the Air Quality API (not by HTTP referrer, since the call is server-side). When unset, the route uses the keyless Open-Meteo Air Quality API; if both fail the chip shows *Air quality unavailable*. |
 
-> Changing these values requires restarting the dev server, as `NEXT_PUBLIC_*` values are frozen at build time.
+> Changing `NEXT_PUBLIC_*` values requires restarting the dev server, as they are frozen at build time. `GOOGLE_AIR_QUALITY_API_KEY` is read per request.

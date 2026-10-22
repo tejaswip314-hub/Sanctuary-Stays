@@ -9,6 +9,7 @@ import {
   useMap,
 } from '@vis.gl/react-google-maps';
 import { SanctuaryStay } from '../types/sanctuary';
+import { MapTypeSwitcher, MapType } from './MapTypeSwitcher';
 import {
   VolumeX,
   Moon,
@@ -88,6 +89,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
 
   const [mapReady, setMapReady] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mapType, setMapType] = useState<MapType>('roadmap');
   const [activePinStay, setActivePinStay] = useState<SanctuaryStay | null>(
     sanctuaries.length > 0 ? sanctuaries[0] : null
   );
@@ -111,7 +113,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
       const isSingle = bounds.north === bounds.south && bounds.east === bounds.west;
       if (isSingle) {
         map.panTo({ lat: bounds.north, lng: bounds.east });
-        map.setZoom(9);
+        map.setZoom(15);
       } else {
         map.fitBounds(bounds, MAP_PADDING);
       }
@@ -128,7 +130,7 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
       lng: selectedSanctuary.location.coordinates.lng,
     });
     const current = map.getZoom() ?? WORLD_ZOOM;
-    map.setZoom(Math.max(current, 8));
+    map.setZoom(Math.max(current, 14));
   }, [map, selectedSanctuary]);
 
   // Track fullscreen state.
@@ -179,11 +181,12 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
       {/* Google Maps canvas */}
       <GoogleMap
         mapId={MAP_ID}
+        mapTypeId={mapType as google.maps.MapTypeId}
         colorScheme={isDarkTheme ? ColorScheme.DARK : ColorScheme.LIGHT}
         defaultCenter={WORLD_CENTER}
         defaultZoom={WORLD_ZOOM}
         minZoom={2}
-        maxZoom={17}
+        maxZoom={20}
         gestureHandling="greedy"
         disableDefaultUI
         clickableIcons={false}
@@ -276,6 +279,11 @@ const MapSurface: React.FC<MapSurfaceProps> = ({
             )}
           </button>
         </div>
+      </div>
+
+      {/* Map type switcher */}
+      <div className="relative z-20 -mt-1 px-4 sm:px-5 pointer-events-none">
+        <MapTypeSwitcher value={mapType} onChange={setMapType} className="w-fit" />
       </div>
 
       {/* Loading shimmer while tiles initialise */}

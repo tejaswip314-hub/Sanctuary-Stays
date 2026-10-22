@@ -86,6 +86,7 @@ sanctuary-stays/
 ├── src/
 │   ├── app/
 │   │   ├── api/
+│   │   │   ├── air-quality/route.ts  # Google Air Quality API proxy (AQI per stay)
 │   │   │   ├── bookings/route.ts     # Reservation API endpoint (INR currency)
 │   │   │   └── concierge/route.ts    # Concierge dispatch API endpoint
 │   │   ├── favicon.ico
@@ -93,6 +94,7 @@ sanctuary-stays/
 │   │   ├── layout.tsx                # Metadata & HTML root
 │   │   └── page.tsx                  # Main client-side orchestrator
 │   ├── components/
+│   │   ├── AirQualityBadge.tsx       # Live AQI chip (fetches /api/air-quality)
 │   │   ├── BookingConfirmationModal.tsx
 │   │   ├── CategoryPills.tsx
 │   │   ├── ConciergeModal.tsx
@@ -101,11 +103,13 @@ sanctuary-stays/
 │   │   ├── HostDashboardModal.tsx
 │   │   ├── HostSubmissionModal.tsx
 │   │   ├── InteractiveMap.tsx
+│   │   ├── MapTypeSwitcher.tsx       # Default / Satellite / Terrain segmented control
 │   │   ├── Navbar.tsx
 │   │   ├── SanctuaryCard.tsx
 │   │   ├── SanctuaryDetailModal.tsx
 │   │   ├── SavedStaysModal.tsx
-│   │   ├── StayLocationMap.tsx       # Reusable per-stay Google map + directions
+│   │   ├── StayLocationMap.tsx       # Reusable per-stay Google map + directions + AQI
+│   │   ├── StreetViewModal.tsx       # Nearest-panorama Street View viewer
 │   │   └── VettingStandardSection.tsx
 │   ├── data/
 │   │   ├── amenityCatalog.ts         # Collective + collection amenities & grouping

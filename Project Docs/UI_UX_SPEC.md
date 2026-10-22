@@ -52,11 +52,12 @@ Users can switch between three responsive layout modes via the toolbar in the ma
 - **Configuration (`.env.local`):** `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (required — Maps JavaScript API key, restricted by HTTP referrer) and optional `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` (vector styling + Advanced Markers; falls back to Google's shared `DEMO_MAP_ID`). A template lives in `.env.example`. If no key is present a branded *Connect Google Maps* placeholder renders instead, so the build and site never break.
 - **Theme-Aware Style:** `colorScheme` switches between `ColorScheme.DARK` (*Midnight Obsidian*) and `ColorScheme.LIGHT` (*Warm Editorial Linen*) live with the theme toggle.
 - **Price Pin Badges:** Custom `AdvancedMarkerElement` markers with a `.snc-marker-pill` HTML child formatted in INR (`₹1,25,000`), center-anchored (`anchorLeft`/`anchorTop: -50%`). The active pin (hovered or selected) turns champagne-gold and scales up (`.snc-marker-pill.is-active`).
-- **Data-Driven Plotting:** Every sanctuary is plotted from its real `location.coordinates` (lat/lng); the map auto-`fitBounds` to the filtered result set and pan/zooms to a selected stay.
+- **Data-Driven Plotting:** Every sanctuary is plotted from its real `location.coordinates` (lat/lng); the map auto-`fitBounds` to the filtered result set and pan/zooms to a selected stay (zooming to level **14** so the exact property area is legible).
 - **Controls:** In-map zoom in/out, recenter-to-world, and native fullscreen toggle (`requestFullscreen`), plus a live stay count. Google's default UI is disabled.
+- **Map Types:** A segmented **Default / Satellite / Terrain** switcher (`MapTypeSwitcher.tsx`) updates `mapTypeId` live without reloading the map. Max zoom raised to **20** for street-level inspection.
 - **Hover Sync:** Hovering a card highlights its pin (and vice-versa) driven by `hoveredSanctuaryId`; clicking a pin opens the detail modal.
 - **Floating Vibe Bar:** Displays ambient acoustics (*21 dB Quiet*), dark-sky Bortle class, and private perimeter score (*99 / 100*), offset above the Google attribution.
-- **Portable Per-Stay Map (`StayLocationMap.tsx`):** A standalone, reusable Google Map (own `APIProvider`) that plots a single stay's coordinates with a branded `.snc-marker-pill` pin and *Get Directions* / *Open in Maps* links. Used inside the detail modal; falls back to a styled coordinate card (with the same deep links) when no API key is configured, and is guarded by its own error boundary.
+- **Portable Per-Stay Map (`StayLocationMap.tsx`):** A standalone, reusable Google Map (own `APIProvider`) that plots a single stay's coordinates with a branded `.snc-marker-pill` pin. Opens at **zoom 16** (max **21**) so buyers can see the property and its immediate streets. Includes *Get Directions* / *Open in Maps* deep links, the same **Default / Satellite / Terrain** switcher, a **Street View** launcher (`StreetViewModal.tsx` — nearest outdoor panorama with graceful no-coverage state), and a live **air-quality chip** (`AirQualityBadge.tsx`: AQI, colour dot, category, dominant-pollutant tooltip). Used inside the detail modal; falls back to a styled coordinate card (with the same deep links) when no API key is configured, and is guarded by its own error boundary.
 
 ---
 
@@ -75,7 +76,7 @@ Users can switch between three responsive layout modes via the toolbar in the ma
 1. **Sanctuary Detail Spread (`SanctuaryDetailModal.tsx`)**:
    - Full-bleed photo gallery with thumbnail selector.
    - Architectural provenance & architect profile.
-   - **Location & Neighborhood** — a per-stay **custom location map** (`StayLocationMap.tsx`) centred on the stay's exact coordinates with a gold pin, plus *Get Directions* / *Open in Maps* deep links and a neighborhood vibe grid (acoustics, dark-sky class, privacy score, airport drive time, culinary proximity).
+   - **Location & Neighborhood** — a per-stay **custom location map** (`StayLocationMap.tsx`) centred on the stay's exact coordinates with a gold pin, **Default / Satellite / Terrain** layers, **Street View**, a **live AQI chip**, *Get Directions* / *Open in Maps* deep links, and a neighborhood vibe grid (acoustics, dark-sky class, privacy score, airport drive time, culinary proximity).
    - **Amenities & Guest Services** — themed amenity groups (Wellness & Spa, Culinary, Technology & Comfort, Outdoors & Experiences, Services & Safety) rendered as icon chips with a *Show all N amenities* expander.
    - 100-Point Audit Report with **Acoustic Frequency Spectrum Bars** (Low, Mid, High frequency isolation dB).
    - Verified guest testimonials with traveler professional credentials.
